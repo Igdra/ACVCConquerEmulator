@@ -11,6 +11,8 @@ public:
 public ref class Server
 {
 public:
+	delegate void DoubleAction(array<unsigned char>^ buffer, SyncObj^ Mediator);
+	event DoubleAction^ OnRecieve;
 	event Action<SyncObj^>^ OnConnect;
 	IPAddress^ InternalIP;
 	int InternalPort;
@@ -28,7 +30,21 @@ public:
 	void RecieveData( IAsyncResult^ Result)
 	{
 		SyncObj^ Mediator = (SyncObj^)Result->AsyncState;
-
+		SocketError% Error = (SocketError%)SocketError::Disconnecting;
+		int Size = Mediator->Client->EndReceive(Result, Error);
+		if( Size > 0 && Error == SocketError::Success)
+		{
+			array<unsigned char>^ buffer = gcnew array<unsigned char>(Size);
+			Buffer::BlockCopy(Mediator->Buffer, 0, buffer, 0, Size);
+			OnRecieve(buffer, Mediator);
+					Mediator->Client->BeginReceive(Mediator->Buffer, 0, 65535, SocketFlags::None,
+			gcnew AsyncCallback(this, &Server::RecieveData), Mediator);
+		}
+		else
+		{
+			if(Mediator->Client->Connected)
+				Mediator->Client->Disconnect(true);
+		}
 	}
 	void RecieveConnection( IAsyncResult^ Result)
 	{
@@ -36,7 +52,7 @@ public:
 		Mediator->Client = Listener->EndAccept(Result);
 		Mediator->Buffer = gcnew array<unsigned char>(65535);
 
-		Listener->BeginReceive(Mediator->Buffer, 0, 65535, SocketFlags::None,
+		Mediator->Client->BeginReceive(Mediator->Buffer, 0, 65535, SocketFlags::None,
 			gcnew AsyncCallback(this, &Server::RecieveData), Mediator);
 
 		OnConnect(Mediator);
