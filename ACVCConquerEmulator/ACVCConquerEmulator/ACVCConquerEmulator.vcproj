@@ -209,6 +209,14 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="Networking"
+				>
+				<File
+					RelativePath=".\Server.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

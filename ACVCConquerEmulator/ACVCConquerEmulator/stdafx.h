@@ -6,3 +6,7 @@
 #pragma once
 
 // TODO: reference additional headers your program requires here
+
+using namespace System;
+using namespace System::Net;
+using namespace System::Net::Sockets;
