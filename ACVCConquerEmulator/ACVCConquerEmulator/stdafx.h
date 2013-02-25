@@ -10,3 +10,6 @@
 using namespace System;
 using namespace System::Net;
 using namespace System::Net::Sockets;
+
+#define printf(a) Console::Write(a)
+#define getchar() Console::ReadKey()
