@@ -4,7 +4,24 @@
 #include "Database.h"
 #include "Server.cpp"
 
-void ConnectAction(SyncObj^ Mediator);
+
+
+public ref class Handler
+{
+public:
+	static void ConnectAction(SyncObj^ Mediator)
+	{
+
+	}
+public:
+	static void RecieveAction(array<unsigned char>^ buffer, SyncObj^ Mediator)
+	{
+
+	}
+};
+
+
+
 
 int main()
 {
@@ -12,13 +29,9 @@ int main()
 	Server^ LoginServer = gcnew Server(Database::ServerIP, Database::LoginPort);
 	LoginServer->Start();
 	printf(" server started!");
-	//LoginServer->OnConnect = &ConnectAction;
+	LoginServer->OnConnect += gcnew Action<SyncObj^>(&Handler::ConnectAction);
+	LoginServer->OnRecieve += gcnew Server::DoubleAction(&Handler::RecieveAction);
 	for(;;)
 	{ }
     return 0;
-}
-
-void ConnectAction(SyncObj^ Mediator)
-{
-
 }
