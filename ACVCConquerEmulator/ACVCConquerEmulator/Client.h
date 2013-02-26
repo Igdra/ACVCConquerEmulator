@@ -9,4 +9,5 @@ public:
 	AuthCryptographer^ AuthCrypt;
 	Socket^ InnerClient;
 	void SendAuth(void* Addr, int Count);
+	unsigned int PasswordSeed;
 };

@@ -13,23 +13,42 @@
 public ref class Handler
 {
 public:
-	static void ConnectAction(SyncObj^ Mediator)
+	static void AuthConnectAction(SyncObj^ Mediator)
 	{
 #ifdef DEBUG
 		printf("Connection recieved : "+Mediator->Client->RemoteEndPoint->ToString()+"\n");
-		printf("Sending seed..\n");
+		printf("Sending seed.. ");
 #endif
 		unsigned int Seed = Ultilities::RandomUInt32();
 		Client^ ConnectingClient = gcnew Client();
 		ConnectingClient->InnerClient = Mediator->Client;
 		ConnectingClient->AuthCrypt = gcnew AuthCryptographer();
 		PasswordSeed* InitialSeed = new PasswordSeed(Seed);
-		ConnectingClient->SendAuth((void*)InitialSeed, InitialSeed->Length);
+		ConnectingClient->SendAuth( InitialSeed, InitialSeed->Length);
+		ConnectingClient->PasswordSeed = Seed;
+		Database::ConnectedClients->Add(Mediator->Client, ConnectingClient);
+#ifdef DEBUG
+		printf("seed has been sent successfully.\n");
+#endif
 	}
-public:
-	static void RecieveAction(array<unsigned char>^ buffer, SyncObj^ Mediator)
+	static void AuthRecieveAction(array<unsigned char>^ buffer, SyncObj^ Mediator)
 	{
+		Client^ MyClient = Database::ConnectedClients[Mediator->Client];
+		MyClient->AuthCrypt->Decode(&buffer);
+		unsigned short Size = BitConverter::ToUInt16(buffer, 0);
+		unsigned short Type = BitConverter::ToUInt16(buffer, 2);
+		switch( Type)
+		{
+			case 1060:
+            case 1086:
+				{
+#ifdef DEBUG
+					printf("Login requested.\n");
+#endif
 
+					break;
+				}
+		}
 	}
 };
 
@@ -42,8 +61,8 @@ int main()
 	Server^ LoginServer = gcnew Server(Database::ServerIP, Database::LoginPort);
 	LoginServer->Start();
 	printf(" server started!\n");
-	LoginServer->OnConnect += gcnew Action<SyncObj^>(&Handler::ConnectAction);
-	LoginServer->OnRecieve += gcnew Server::DoubleAction(&Handler::RecieveAction);
+	LoginServer->OnConnect += gcnew Action<SyncObj^>(&Handler::AuthConnectAction);
+	LoginServer->OnRecieve += gcnew Server::DoubleAction(&Handler::AuthRecieveAction);
 	for(;;)
 	{ }
     return 0;

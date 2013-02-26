@@ -194,15 +194,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Client.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Database.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Packets.cpp"
 				>
 			</File>
 			<File
@@ -232,6 +224,14 @@
 			<Filter
 				Name="Networking"
 				>
+				<File
+					RelativePath=".\Client.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Packets.cpp"
+					>
+				</File>
 				<File
 					RelativePath=".\Server.cpp"
 					>

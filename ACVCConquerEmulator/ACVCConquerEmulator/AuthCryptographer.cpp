@@ -40,8 +40,8 @@ void AuthCryptographer::Decode(array<unsigned char>^ *buffer)
 	{
 		(*buffer)[i] ^= (unsigned char) 0xAB;
 		(*buffer)[i] = (unsigned char) ( (*buffer)[i] >> 4 | (*buffer)[i] << 4 );
-		(*buffer)[i] ^= (unsigned char) ( FirstKey[EncryptCounter->FirstKey()] ^  
-			SecondKey[EncryptCounter->SecondKey()]  );
+		(*buffer)[i] ^= (unsigned char) ( FirstKey[DecryptCounter->FirstKey()] ^  
+			SecondKey[DecryptCounter->SecondKey()]  );
 		DecryptCounter->Increment(1);
 	}
 }
