@@ -57,10 +57,10 @@ public:
 
 int main()
 {
-	printf("Starting server...");
+	printf("Starting auth server...");
 	Server^ LoginServer = gcnew Server(Database::ServerIP, Database::LoginPort);
 	LoginServer->Start();
-	printf(" server started!\n");
+	printf(" server started! ("+Database::ServerIP->ToString()+":"+Database::LoginPort+")\n");
 	LoginServer->OnConnect += gcnew Action<SyncObj^>(&Handler::AuthConnectAction);
 	LoginServer->OnRecieve += gcnew Server::DoubleAction(&Handler::AuthRecieveAction);
 	for(;;)
