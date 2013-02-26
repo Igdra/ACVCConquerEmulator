@@ -190,7 +190,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AuthCryptographer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Client.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Database.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Packets.cpp"
 				>
 			</File>
 			<File
@@ -213,6 +225,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\Ultilities.cpp"
+				>
+			</File>
 			<Filter
 				Name="Networking"
 				>
@@ -228,6 +244,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\AuthCryptographer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Client.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Database.h"
 				>
 			</File>
@@ -237,6 +261,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Ultilities.h"
 				>
 			</File>
 		</Filter>
