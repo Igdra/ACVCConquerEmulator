@@ -36,6 +36,7 @@ Author : ACVC
 #include "RC5.cpp"
 
 #define DEBUG
+#define CLIENT_CREATE_ACCOUNT
 
 public ref class Handler
 {
@@ -96,6 +97,17 @@ public:
 					printf("[DEBUG]Password found : "+ Password);
 					/* PHEW! Finally done! */
 #endif
+
+					if( Database::ValidateAuth(User, Password) )
+					{
+
+					}
+					else
+					{
+#ifdef CLIENT_CREATE_ACCOUNT
+					/* Create account should login fail. */
+#endif
+					}
 					break;
 				}
 		}

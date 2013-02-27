@@ -34,4 +34,5 @@ public:
 	static int LoginPort = 9958;
 	static int GamePort = 5816;
 	static Dictionary<Socket^, Client^>^ ConnectedClients = gcnew Dictionary<Socket^, Client^>();
+	static bool ValidateAuth(String^ UserName, String^ Password);
 };

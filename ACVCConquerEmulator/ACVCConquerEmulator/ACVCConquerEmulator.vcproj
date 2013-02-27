@@ -278,6 +278,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Enums.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
 				>
 			</File>

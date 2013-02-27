@@ -25,3 +25,8 @@ Author : ACVC
 #include "StdAfx.h"
 #include "Database.h"
 
+bool Database::ValidateAuth(System::String ^UserName, System::String ^Password)
+{
+	/* Code auth system */
+	return false;
+}

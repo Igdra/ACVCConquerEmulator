@@ -23,7 +23,7 @@
 Author : ACVC
 */
 #include "stdafx.h"
-
+#include "Enums.h"
 
 public class PasswordSeed
 	{
@@ -40,3 +40,9 @@ public class PasswordSeed
 			Seed = seed;
 		}
 	};
+
+/*
+static array<unsigned char>^ AuthResponse(String^ IP, unsigned short Port,	unsigned int Token, AuthResponses Response)
+{
+	return null;
+}*/
