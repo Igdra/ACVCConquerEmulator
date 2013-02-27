@@ -32,6 +32,8 @@ Author : ACVC
 #include "AuthCryptographer.h"
 #include "Client.h"
 #include "Packets.cpp"
+#include "PasswordCrypt.cpp"
+#include "RC5.cpp"
 
 #define DEBUG
 
@@ -83,6 +85,17 @@ public:
 						rc5Key[i] = (unsigned char)msvcrt::msvcrt::rand();
 
 					/* TODO : Add password crypt. support.. (Prepared for hell?) */
+
+					PasswordCryptopgraphy^ PassCrypt_ = gcnew PasswordCryptopgraphy(User);
+					RC5^ RC5Crypt = gcnew RC5(rc5Key);
+					RawPassword = RC5Crypt->Decrypt(RawPassword);
+					PassCrypt_->Decrypt( &RawPassword, 16) ;
+					String^ Password = System::Text::ASCIIEncoding::ASCII
+						->GetString(RawPassword)->Trim('\0');
+#ifdef DEBUG
+					printf("[DEBUG]Password found : "+ Password);
+					/* PHEW! Finally done! */
+#endif
 					break;
 				}
 		}
@@ -98,12 +111,24 @@ public:
 int main()
 {
 	printf("Starting auth server...");
-	Server^ LoginServer = gcnew Server(Database::ServerIP, Database::LoginPort);
-	LoginServer->Start();
-	printf(" server started! ("+Database::ServerIP->ToString()+":"+Database::LoginPort+")\n");
-	LoginServer->OnConnect += gcnew Action<SyncObj^>(&Handler::AuthConnectAction);
-	LoginServer->OnRecieve += gcnew Server::DoubleAction(&Handler::AuthRecieveAction);
+	try
+	{
+		Server^ LoginServer = gcnew Server(Database::ServerIP, Database::LoginPort);
+		LoginServer->Start();
+		printf(" server started! ("+Database::ServerIP->ToString()+":"+Database::LoginPort+")\n");
+		LoginServer->OnConnect += gcnew Action<SyncObj^>(&Handler::AuthConnectAction);
+		LoginServer->OnRecieve += gcnew Server::DoubleAction(&Handler::AuthRecieveAction);
+	}
+	catch (Exception^ e)
+	{
+		printf(" server could not be started. Invalid IP Address/Port. \nPress any key to exit.\n");
+		getchar();
+		return 0;
+	}
+
 	for(;;)
-	{ }
+	{
+
+	}
     return 0;
 }
