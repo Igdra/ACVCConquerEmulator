@@ -25,6 +25,60 @@ Author : ACVC
 #include "stdafx.h"
 #include "Enums.h"
 
+public ref class Packet
+{
+public:
+	array<unsigned char>^ InnerPacket;
+	Packet(int Size)
+	{
+		InnerPacket = gcnew array<unsigned char>(Size);
+	}
+	void Write( void* Data, int size, int Offset)
+	{
+		for(int a = Offset; a < Offset + size; a++)
+		{
+			InnerPacket[a] = *(((unsigned char*)Data) + (a - Offset) );
+		}
+	}
+	void WriteString( String^ Data, int Offset)
+	{
+		array<unsigned char>^ StrToArray = Text::Encoding::ASCII->GetBytes(Data);
+		for(int a = Offset; a < Offset + Data->Length; a++)
+			InnerPacket[a] = StrToArray[a - Offset];
+	}
+	void WriteStamp()
+	{
+		WriteString("TQServer", InnerPacket->Length - 9);
+	}
+};
+
+
+public ref class Packets sealed abstract
+{
+public:
+		static array<unsigned char>^ AuthResponse(String^ IP, unsigned short Port,	unsigned int Token, AuthResponses Response)
+{
+	Packet^ P = gcnew Packet(52);
+	unsigned short _Len = 52;
+	unsigned short _Type = 1055;
+	unsigned int _Token = Token;
+	unsigned int _Response = (unsigned int)Response;
+	unsigned int _Port = Port;
+	unsigned short _A = 42508;
+	unsigned short _B = 67;
+	P->Write(&_Len, sizeof(_Len), 0);
+	P->Write(&_Type, sizeof(_Type), 2);
+	P->Write(&_Token, sizeof(_Token), 4);
+	P->Write(&_Response, sizeof(_Response), 8);
+	P->Write(&_Port, sizeof(_Port), 12);
+	P->Write(&_A, sizeof(_A), 16);
+    P->Write(&_B, sizeof(_B), 18);
+	P->WriteString(IP, 20 );
+	return P->InnerPacket;
+}
+};
+
+
 public class PasswordSeed
 	{
 	public:
@@ -41,8 +95,12 @@ public class PasswordSeed
 		}
 	};
 
-/*
-static array<unsigned char>^ AuthResponse(String^ IP, unsigned short Port,	unsigned int Token, AuthResponses Response)
-{
-	return null;
-}*/
+
+
+
+
+
+
+
+
+

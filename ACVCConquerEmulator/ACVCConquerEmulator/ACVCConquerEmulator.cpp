@@ -73,7 +73,8 @@ public:
 #ifdef DEBUG
 					printf("[DEBUG]Login requested.\n");
 #endif
-					String^ User = Ultilities::ReadString(buffer, 4, 16)->TrimEnd('\0');
+					String^ User = Ultilities::ReadString
+						(buffer, 4, 16)->TrimEnd('\0');
 #ifdef DEBUG
 					printf("[DEBUG]User name found : '"+ User+"'.\n");
 #endif
@@ -94,19 +95,34 @@ public:
 					String^ Password = System::Text::ASCIIEncoding::ASCII
 						->GetString(RawPassword)->Trim('\0');
 #ifdef DEBUG
-					printf("[DEBUG]Password found : "+ Password);
+					printf("[DEBUG]Password found : "+ Password+"\n");
 					/* PHEW! Finally done! */
 #endif
 
+#ifdef CLIENT_CREATE_ACCOUNT
+					/* Create account should contain "new". */
+					if( User->ToLower()->Contains("new") )
+					{
+						/* Register */
+					}
+
+#endif
+
+
 					if( Database::ValidateAuth(User, Password) )
 					{
-
+#ifdef DEBUG
+						printf("[DEBUG]Auth completed for account "+User+"\n");
+#endif
 					}
 					else
 					{
-#ifdef CLIENT_CREATE_ACCOUNT
-					/* Create account should login fail. */
+#ifdef DEBUG
+						printf("[DEBUG]Auth failed for account "+User+"\n");
 #endif
+						array<unsigned char>^ Failed = Packets::AuthResponse(Database::ServerIP->ToString()
+							, Database::GamePort, 0, AuthResponses::Invalid);
+						MyClient->SendAuth(&Failed, Failed->Length);
 					}
 					break;
 				}

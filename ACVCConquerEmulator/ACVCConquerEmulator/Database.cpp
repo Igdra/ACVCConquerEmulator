@@ -27,6 +27,14 @@ Author : ACVC
 
 bool Database::ValidateAuth(System::String ^UserName, System::String ^Password)
 {
-	/* Code auth system */
-	return false;
+	String^ Model = "Database/Accounts/##ACC##.acc";
+	if( File::Exists( Model->Replace("##ACC##", UserName) ) )
+	{
+		array<String^>^ AllLines = File::ReadAllLines( Model->Replace("##ACC##", UserName));
+		/* User */
+		/* Password */
+		/* Character name */
+		return ( (AllLines[0]->Trim() == UserName) && (AllLines[1]->Trim() == Password) );
+	}
+	else return false;
 }
