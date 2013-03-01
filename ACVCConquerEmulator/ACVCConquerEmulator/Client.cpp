@@ -29,14 +29,21 @@ Client::Client(void)
 {
 }
 
-void Client::SendAuth(void* Addr, int Count)
+void Client::SendAuth(void* Addr, int Count) /* Use this for data structs ONLY! (Don't try with arrays) */
 {
 	array<unsigned char>^ Buffer = gcnew array<unsigned char>(Count);
 	for(int a = 0; a < Count; a++)
 	{
-		Buffer[a] = *( ((unsigned char*)Addr) + a );
+		Buffer[a] = *( (unsigned char*)Addr + a );
 	}
 	AuthCrypt->Encode(&Buffer);
 	InnerClient->Send(Buffer);
 
+}
+
+void Client::SendAuth(array<unsigned char>^ Packet)
+{
+	array<unsigned char>^ Buffer = Packet;
+	AuthCrypt->Encode(&Buffer);
+	InnerClient->Send(Buffer);
 }

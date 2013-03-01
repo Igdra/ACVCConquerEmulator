@@ -35,4 +35,6 @@ public:
 	static int GamePort = 5816;
 	static Dictionary<Socket^, Client^>^ ConnectedClients = gcnew Dictionary<Socket^, Client^>();
 	static bool ValidateAuth(String^ UserName, String^ Password);
+	static void FindBans();
+	static List<String^>^ Banned = gcnew List<String^>();
 };

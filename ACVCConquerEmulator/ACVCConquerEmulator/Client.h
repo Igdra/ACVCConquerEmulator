@@ -33,5 +33,6 @@ public:
 	AuthCryptographer^ AuthCrypt;
 	Socket^ InnerClient;
 	void SendAuth(void* Addr, int Count);
+	void SendAuth(array<unsigned char>^ Packet);
 	unsigned int PasswordSeed;
 };

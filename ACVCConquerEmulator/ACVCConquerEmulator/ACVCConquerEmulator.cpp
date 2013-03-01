@@ -109,20 +109,30 @@ public:
 #endif
 
 
-					if( Database::ValidateAuth(User, Password) )
+					if( Database::Banned->Contains(User))
+					{
+						MyClient->SendAuth(Packets::AuthResponse(Database::ServerIP->ToString()
+							, Database::GamePort, 0, AuthResponses::Banned));
+						return;
+					}
+
+
+					if( Database::ValidateAuth(User, Password)  )
 					{
 #ifdef DEBUG
 						printf("[DEBUG]Auth completed for account "+User+"\n");
 #endif
+						MyClient->SendAuth(Packets::AuthResponse(Database::ServerIP->ToString()
+							, Database::GamePort, 0, AuthResponses::Valid));
 					}
 					else
 					{
 #ifdef DEBUG
 						printf("[DEBUG]Auth failed for account "+User+"\n");
 #endif
-						array<unsigned char>^ Failed = Packets::AuthResponse(Database::ServerIP->ToString()
-							, Database::GamePort, 0, AuthResponses::Invalid);
-						MyClient->SendAuth(&Failed, Failed->Length);
+
+						MyClient->SendAuth(Packets::AuthResponse(Database::ServerIP->ToString()
+							, Database::GamePort, 0, AuthResponses::Invalid));
 					}
 					break;
 				}
@@ -146,6 +156,7 @@ int main()
 		printf(" server started! ("+Database::ServerIP->ToString()+":"+Database::LoginPort+")\n");
 		LoginServer->OnConnect += gcnew Action<SyncObj^>(&Handler::AuthConnectAction);
 		LoginServer->OnRecieve += gcnew Server::DoubleAction(&Handler::AuthRecieveAction);
+		Database::FindBans();
 	}
 	catch (Exception^ e)
 	{

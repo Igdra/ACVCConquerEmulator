@@ -38,3 +38,16 @@ bool Database::ValidateAuth(System::String ^UserName, System::String ^Password)
 	}
 	else return false;
 }
+
+void Database::FindBans()
+{
+	if( File::Exists("Database/Bans.ini"))
+	{
+		array<String^>^ Names = File::ReadAllLines("Database/Bans.ini");
+		for(int a = 0; a < Names->Length; a++)
+			Database::Banned->Add(Names[a]);
+		printf("Bans have been successfully loaded.\n");
+	}
+	else
+		printf("[FAIL]File containing banned account names is missing.\n");
+}
