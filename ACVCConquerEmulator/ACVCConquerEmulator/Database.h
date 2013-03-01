@@ -36,5 +36,6 @@ public:
 	static Dictionary<Socket^, Client^>^ ConnectedClients = gcnew Dictionary<Socket^, Client^>();
 	static bool ValidateAuth(String^ UserName, String^ Password);
 	static void FindBans();
+	static bool CreateAccount(String^ Name, String^ Password);
 	static List<String^>^ Banned = gcnew List<String^>();
 };

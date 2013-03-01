@@ -51,3 +51,17 @@ void Database::FindBans()
 	else
 		printf("[FAIL]File containing banned account names is missing.\n");
 }
+
+bool Database::CreateAccount(String^ Name, String^ Password)
+{
+	if( !File::Exists("Database/Accounts/"+Name+".acc"))
+	{
+		StreamWriter^ Swrt = gcnew StreamWriter("Database/Accounts/"+Name+".acc");
+		Swrt->WriteLine(Name);
+		Swrt->WriteLine(Password);
+		Swrt->WriteLine("");
+		Swrt->Close();
+		return true;
+	}
+	return false;
+}

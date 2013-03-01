@@ -101,9 +101,16 @@ public:
 
 #ifdef CLIENT_CREATE_ACCOUNT
 					/* Create account should contain "new". */
-					if( User->ToLower()->Contains("new") )
+					if( User->ToLower()->Substring(0,3) == "new" )
 					{
 						/* Register */
+						User = User->Remove(0, 3);
+						if (!Database::CreateAccount(User, Password) )
+						{
+							MyClient->SendAuth(Packets::AuthResponse(Database::ServerIP->ToString()
+							, Database::GamePort, 0, AuthResponses::Invalid));
+							return;
+						}
 					}
 
 #endif
@@ -122,8 +129,9 @@ public:
 #ifdef DEBUG
 						printf("[DEBUG]Auth completed for account "+User+"\n");
 #endif
+						unsigned int LoginToken = Ultilities::RandomUInt32();
 						MyClient->SendAuth(Packets::AuthResponse(Database::ServerIP->ToString()
-							, Database::GamePort, 0, AuthResponses::Valid));
+							, Database::GamePort, LoginToken, AuthResponses::Valid));
 					}
 					else
 					{
@@ -138,6 +146,18 @@ public:
 				}
 		}
 	}
+	static void GameConnectAction(SyncObj^ Mediator)
+	{
+#ifdef DEBUG
+		printf("[DEBUG]Game server : Connection recieved.\n");
+#endif
+	}
+	static void GameRecieveAction(array<unsigned char>^ buffer, SyncObj^ Mediator)
+	{
+#ifdef DEBUG
+		printf("[DEBUG]Game server : Data recieved.\n");
+#endif
+	}
 };
 
 
@@ -148,19 +168,26 @@ public:
 
 int main()
 {
-	printf("Starting auth server...");
+	printf("Starting servers...");
 	try
 	{
 		Server^ LoginServer = gcnew Server(Database::ServerIP, Database::LoginPort);
 		LoginServer->Start();
-		printf(" server started! ("+Database::ServerIP->ToString()+":"+Database::LoginPort+")\n");
 		LoginServer->OnConnect += gcnew Action<SyncObj^>(&Handler::AuthConnectAction);
 		LoginServer->OnRecieve += gcnew Server::DoubleAction(&Handler::AuthRecieveAction);
+
+		Server^ GameServer = gcnew Server( Database::ServerIP, Database::GamePort);
+		GameServer->Start();
+		GameServer->OnConnect += gcnew Action<SyncObj^>(&Handler::GameConnectAction);
+		GameServer->OnRecieve += gcnew Server::DoubleAction(&Handler::GameRecieveAction);
+
+		printf(" both servers(auth, game)\n listening! ("+Database::ServerIP->ToString()+":("+Database::LoginPort+","+Database
+			::GamePort+") )\n");
 		Database::FindBans();
 	}
 	catch (Exception^ e)
 	{
-		printf(" server could not be started. Invalid IP Address/Port. \nPress any key to exit.\n");
+		printf(" one of the servers could not be started. Invalid IP Address/Port. \nPress any key to exit.\n");
 		getchar();
 		return 0;
 	}
