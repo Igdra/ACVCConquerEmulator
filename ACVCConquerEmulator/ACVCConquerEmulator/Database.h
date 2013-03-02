@@ -30,12 +30,14 @@ Author : ACVC
 ref class Database sealed abstract
 {
 public:
-	static IPAddress^ ServerIP = IPAddress::Parse("192.168.0.185");
+	static IPAddress^ ServerIP = IPAddress::Any;
 	static int LoginPort = 9958;
 	static int GamePort = 5816;
+	static String^ GenericPassword = "generic";
 	static Dictionary<Socket^, Client^>^ ConnectedClients = gcnew Dictionary<Socket^, Client^>();
 	static bool ValidateAuth(String^ UserName, String^ Password);
 	static void FindBans();
+	static void LoadSettings();
 	static bool CreateAccount(String^ Name, String^ Password);
 	static List<String^>^ Banned = gcnew List<String^>();
 };

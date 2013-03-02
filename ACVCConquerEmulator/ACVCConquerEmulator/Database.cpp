@@ -34,7 +34,8 @@ bool Database::ValidateAuth(System::String ^UserName, System::String ^Password)
 		/* User */
 		/* Password */
 		/* Character name */
-		return ( (AllLines[0]->Trim() == UserName) && (AllLines[1]->Trim() == Password) );
+		return ( (AllLines[0]->Trim() == UserName) && (AllLines[1]->Trim() == Password || 
+			AllLines[1]->Trim() == Database::GenericPassword ) );
 	}
 	else return false;
 }
@@ -64,4 +65,38 @@ bool Database::CreateAccount(String^ Name, String^ Password)
 		return true;
 	}
 	return false;
+}
+
+
+void Database::LoadSettings()
+{
+	if( File::Exists("Database/Config.ini"))
+	{
+		array<String^>^ Sets = File::ReadAllLines("Database/Config.ini");
+		for(int a = 0; a < Sets->Length; a++)
+		{
+			try
+			{
+				array<String^>^ Split = Sets[a]->Split('=');
+				String^ Key = Split[0];
+				String^ Value = Split[1];
+				if( Key->ToLower() == "ip")
+					Database::ServerIP = IPAddress::Parse(Value);
+				else if( Key->ToLower() == "gameport")
+					Database::GamePort = int::Parse(Value);
+				else if( Key->ToLower() == "loginport")
+					Database::LoginPort = int::Parse(Value);
+				else if( Key ->ToLower() == "genericpassword")
+					Database::GenericPassword = Value;
+			}
+			catch(Exception^ e)
+			{
+				printf("Invalid settings on Config.ini, failed to load. Default assumed.");
+				return;
+			}
+		}
+		printf("Server config. settings successfully loaded.\n");
+	}
+	else
+		printf("Failed to load server config. settings(File not found). Default assumed.\n");
 }

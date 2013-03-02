@@ -130,6 +130,8 @@ public:
 						printf("[DEBUG]Auth completed for account "+User+"\n");
 #endif
 						unsigned int LoginToken = Ultilities::RandomUInt32();
+						MyClient->LoginToken = LoginToken;
+
 						MyClient->SendAuth(Packets::AuthResponse(Database::ServerIP->ToString()
 							, Database::GamePort, LoginToken, AuthResponses::Valid));
 					}
@@ -168,6 +170,8 @@ public:
 
 int main()
 {
+	Database::LoadSettings();
+	Database::FindBans();
 	printf("Starting servers...");
 	try
 	{
@@ -183,7 +187,6 @@ int main()
 
 		printf(" both servers(auth, game)\n listening! ("+Database::ServerIP->ToString()+":("+Database::LoginPort+","+Database
 			::GamePort+") )\n");
-		Database::FindBans();
 	}
 	catch (Exception^ e)
 	{
@@ -192,7 +195,7 @@ int main()
 		return 0;
 	}
 
-	for(;;)
+	for(;;) /* Main loop */
 	{
 
 	}
